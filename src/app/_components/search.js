@@ -151,7 +151,7 @@ function DisplaySuggestions({ss}){
             aria-labelledby="nested-list-subheader"
         >
             {
-                ss.map(suggestion => ( <Suggestion s={suggestion} /> ) )
+                ss.map((suggestion, index) => ( <Suggestion key={index} s={suggestion} /> ) )
             }
         </List>
     );
