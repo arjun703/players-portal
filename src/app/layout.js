@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head> 
       <script src="https://accounts.google.com/gsi/client" async></script>      </head>
-      <body  style={{backgroundColor: 'rgba(0, 0, 0, 0.1)', overflow: 'hidden!important'}} className={inter.className}>{children}</body>
+      <body  style={{backgroundColor: 'rgba(0, 0, 0, 0.1)', overflowX: 'hidden!important'}} className={inter.className}>{children}</body>
     </html>
   );
 }
