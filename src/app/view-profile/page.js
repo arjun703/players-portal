@@ -39,11 +39,14 @@ export default function ViewProfile({ children }){
         <>
             <Header user={true}></Header>
 
-            <Box >
-                <TabContext value={value}>  
-                    <Box sx={{position:'sticky', top: '0px', borderBottom: 1, borderTop: 1, paddingTop: '10px', borderColor: 'divider', backgroundColor: 'white' }}>
+            <Box id="parentBox">
+                <TabContext id="parentTabContext" value={value}>  
+                    <Box id="parentBox2" sx={{position:'sticky', padding: '10px 0 0 0', top: '0px', 
+                        borderBottom: 1, borderTop: 1, borderColor: 'divider', backgroundColor: 'white' }}>
                         <Container 
+                            id="parentContainer"
                             maxWidth={isLargerDevice && 'md'} 
+                            sx={{padding: !isLargerDevice && '0px!important'}}
                         >
                             <Grid alignItems={'center'} container>
                                 <Grid item xs={11}>    

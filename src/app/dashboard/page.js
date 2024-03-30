@@ -103,7 +103,7 @@ export default function Dashboard() {
           </Grid>
           <Grid item xs={12} md={12} lg={6}>
             <Post title="Arjun Poudel" timeAgo="3h ago" id="1" />
-            <Post title="Rakshya Panta" timeAgo="1h ago" id="2" />
+            <Post title="Bibek Shresta" timeAgo="1h ago" id="2" />
           </Grid>
         </Grid>
       </Container>

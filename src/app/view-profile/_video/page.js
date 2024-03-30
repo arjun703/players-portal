@@ -24,7 +24,9 @@ import Grow from '@mui/material/Grow';
 import {Grid} from '@mui/material';
 import Collapse from '@mui/material/Collapse';
 import { TransitionGroup } from 'react-transition-group';
-
+import Tooltip from '@mui/material/Tooltip';
+import Divider from '@mui/material/Divider';
+import DialogBox from './dialog';
 
 export default function Videos() {
   const [videos, setVideos] = useState([{id: 1, title: 'Video f sfdsddfsf', thumbnail: '/files/t1.jpg' }, {id: 2, title: 'Video 2', thumbnail: '/files/t2.jpg'}]);
@@ -108,11 +110,11 @@ export default function Videos() {
                 strategy={verticalListSortingStrategy}
               >
                 <Paper sx={{ p: {xs: '10px 5px', md: 3}, marginTop: {md: '20px', xs: '0px'}}}>
-                  <Grid container  sx={{alignItems: 'center', justifyContent:'space-between'}}>
-                    <Grid item  style={{marginBottom: 0, padding: '0 10px'}}>
-                      <Typography>Videos</Typography>
+                  <Grid container  sx={{alignItems: 'center'}}>
+                    <Grid item xs style={{marginBottom: 0, padding: '0 10px', paddingRight: '20px'}}>
+                      <Divider></Divider>
                     </Grid>
-                    <Grid  item >
+                    <Grid  item auto>
                       {
                         haveDragChagesBeenMade && (
                           <div>
@@ -127,12 +129,13 @@ export default function Videos() {
                       }
                       { !haveDragChagesBeenMade && 
                         <div onClick={handleAddNewVideo} >
-                          <IconButton><LibraryAddIcon /></IconButton>
+                          <Tooltip title="Add New Video">
+                              <IconButton sx={{':hover': { color: 'blue'}, backgroundColor: 'blue', color: 'white', border: '1px solid blue'}}><LibraryAddIcon /></IconButton>
+                          </Tooltip>
                         </div>
                       }
                     </Grid>
                   </Grid>
-                  <hr style={{marginBottom: '25px', opacity: '0.5'}}/>
                   <TransitionGroup>
                     {
                       videos
@@ -185,6 +188,16 @@ export function SortableVideoItem({video, handleDelete}) {
     handleDelete(id)
   }
   
+  const [isWaitingForConfirmation, setIsWaitingForConfimation] = useState({waiting: false, id: false})
+
+  const displayPrompt = (id) => {
+    setIsWaitingForConfimation({waiting: true, id: id })
+  }
+
+  const handleCancel = () => {
+    setIsWaitingForConfimation({waiting: false, id: false })
+  }
+
   return (
     <div style={style} >
       <Grid container sx={{alignItems: 'center', marginTop: '10px'}}>
@@ -214,11 +227,17 @@ export function SortableVideoItem({video, handleDelete}) {
         </Grid>
         <Grid item auto sx={{justifyContent: 'flex-end', paddingLeft: '5px'}}>
           <div >
-            <IconButton><EditIcon/></IconButton>
-            <IconButton><DeleteIcon onClick={()=>{handleDeleteInner(video.id)}} data-video-id={video.id}/></IconButton>
+            <IconButton><DeleteIcon onClick={()=>{displayPrompt(video.id)}} /></IconButton>
           </div>
         </Grid>
       </Grid>
+      {
+        isWaitingForConfirmation.waiting && 
+        <DialogBox 
+          handleConfirm = {() => {handleDeleteInner(isWaitingForConfirmation.id)}}
+          handleCancel = {handleCancel}
+        />
+      }
     </div>
   );
 }

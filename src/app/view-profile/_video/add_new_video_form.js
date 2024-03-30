@@ -10,7 +10,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import VideoFileIcon from '@mui/icons-material/VideoFile';
 import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
-
+import {Divider} from "@mui/material";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -40,14 +40,18 @@ export default function AddNewVideoForm({handleAddNewVideo, handleCancelAddNewVi
 
     return(
         <Paper sx={{marginTop: {md: '20px', xs: '0px'}, padding: {md: '20px', xs: '15px 5px'}}}>
-            <Grid container sx={{justifyContent: 'space-between', alignItems: 'center'}}>
-                <Grid item>
+            <Grid container sx={{ alignItems: 'center'}}>
+                <Grid item auto>
                     <Button onClick={handleCancelAddNewVideo} variant="text" startIcon={<ArrowBackIosIcon />}>
                         Videos
                     </Button>
                 </Grid>
+                
+                <Grid item xs sx={{padding: '0 20px'}}>
+                    <Divider></Divider>
+                </Grid>
 
-                <Grid item>
+                <Grid item auto>
                     <Button onClick={handleVideoSourceChange} variant="outlined" 
                         startIcon={
                             youtubeOrCustom === 'custom'
@@ -76,7 +80,7 @@ export default function AddNewVideoForm({handleAddNewVideo, handleCancelAddNewVi
 function DisplayCustomUpoadForm({handleCustomUpload}){
     return(
         <>
-            <Container maxWidth='xs'>
+            <Container style={{width: '100%', maxWidth: '500px' }} >
                 <Paper sx={{margin: 3, padding: 2}}>
                     <Stack direction={'column'} spacing={2}>
                         <TextField id="outlined-basic" label="Title" variant="outlined" />
@@ -101,7 +105,7 @@ function DisplayCustomUpoadForm({handleCustomUpload}){
                             <VisuallyHiddenInput type="file" />
                         </Button>
                     </Stack>
-                    <hr style={{margin: '20px 0', opacity: 0.5}}></hr>
+                    <hr style={{margin: '6px 0', opacity: 0}}></hr>
                     <div style={{display:'flex', justifyContent: 'center'}}>
                         <Button
                             variant="contained"
@@ -131,7 +135,7 @@ function DisplayYoutubeImportForm ({handleYoutubeUpload}){
     const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
     return(
         <>
-            <Container maxWidth='xs'>
+            <Container style={{width: '100%', maxWidth: '500px' }}>
                 <Paper sx={{margin: 3, padding: 2}}>
                     <Stack direction={'column'} spacing={2}>
                         <TextField
@@ -145,7 +149,7 @@ function DisplayYoutubeImportForm ({handleYoutubeUpload}){
                             variant="outlined" 
                         />
                     </Stack>
-                    <hr style={{margin: '20px 0', opacity: 0.5}}></hr>
+                    <hr style={{margin: '6px 0', opacity: 0}}></hr>
                     <div style={{display:'flex', justifyContent: 'center'}}>
                         <Button
                             variant="contained"
