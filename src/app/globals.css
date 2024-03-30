@@ -46,5 +46,9 @@ html, body {
 }
 
 .css-145v6pe-MuiButtonBase-root-MuiTabScrollButton-root.Mui-disabled{
-    display: none;
+    display: none!important;
+}
+
+.Mui-disabled{
+    display: none!important;
 }
