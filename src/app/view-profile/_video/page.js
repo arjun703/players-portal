@@ -114,7 +114,7 @@ export default function Videos() {
                     <Grid item xs style={{marginBottom: 0, padding: '0 10px', paddingRight: '20px'}}>
                       <Divider></Divider>
                     </Grid>
-                    <Grid  item auto>
+                    <Grid  item auto sx={{paddingRight: {xs: '10px', md: 0}}}>
                       {
                         haveDragChagesBeenMade && (
                           <div>

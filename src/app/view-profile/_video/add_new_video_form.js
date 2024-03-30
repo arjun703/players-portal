@@ -135,7 +135,7 @@ function DisplayYoutubeImportForm ({handleYoutubeUpload}){
     const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
     return(
         <>
-            <Container style={{width: '100%', maxWidth: '500px' }}>
+            <Container style={{width: '100%', maxWidth: '500px', padding: {xs: '0px!important'} }}>
                 <Paper sx={{margin: 3, padding: 2}}>
                     <Stack direction={'column'} spacing={2}>
                         <TextField

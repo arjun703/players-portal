@@ -40,9 +40,9 @@
 
 
 
-body{
-    overflow-x: hidden!important;
-    margin: 0;
+html, body {
+    overflow: hidden!important;
+    margin: 0!important;
 }
 
 .css-145v6pe-MuiButtonBase-root-MuiTabScrollButton-root.Mui-disabled{
