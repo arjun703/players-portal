@@ -94,7 +94,7 @@ function TabPanels(){
             <TabPanel value="4">
                 <KeyStats />
             </TabPanel>
-            <TabPanel value="5">
+            <TabPanel sx={{padding: {xs: '10px 0', md: '20px 0'} }} value="5">
                 <Academics />
             </TabPanel>
         </>

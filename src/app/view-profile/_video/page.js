@@ -111,8 +111,8 @@ export default function Videos() {
               >
                 <Paper sx={{ p: {xs: '10px 5px', md: 3}, marginTop: {md: '20px', xs: '0px'}}}>
                   <Grid container  sx={{alignItems: 'center'}}>
-                    <Grid item xs style={{marginBottom: 0, padding: '0 10px', paddingRight: '20px'}}>
-                      <Divider></Divider>
+                    <Grid item xs style={{marginBottom: 0}}>
+                      <Divider color="blue" sx={{opacity: 0.4}}></Divider>
                     </Grid>
                     <Grid  item auto >
                       {
