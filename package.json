@@ -27,7 +27,8 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-places-autocomplete": "^7.3.0"
   },
   "devDependencies": {
     "eslint": "^8",

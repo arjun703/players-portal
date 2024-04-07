@@ -18,20 +18,20 @@ export default function HeaderNotLoggedIn(){
                 </Grid>
             </Grid>
 
-            <div class="container">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="logo-wrapper">
+            <div className="container">
+                <div className="d-flex justify-content-between align-items-center">
+                    <div className="logo-wrapper">
                         <Link href="/">
                             <img style={{height: '80px', width: 'auto'}} src="/logo.png" />
                         </Link>
                     </div>
-                    <div class="menu-items-between d-flex" style={{gap: '25px'}}>
+                    <div className="menu-items-between d-flex" style={{gap: '25px'}}>
                         <div>Our Services</div>
                         <div>Sports</div>
                         <div>Contact Us</div>
                         <div>About Us</div>
                     </div>
-                    <div class="menu-items-right">
+                    <div className="menu-items-right">
                         <Button  onClick= {()=>{router.push('/login')}}>
                             Login
                         </Button>

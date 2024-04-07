@@ -17,7 +17,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Header from '../_components/_header/header';
-import About from './_basic-info/page';
+import Summary from './_summary/page';
 import Videos from './_video/page';
 import KeyStats from './_key-stats/page';
 import Athletics  from './_athletics/page';
@@ -25,6 +25,7 @@ import Academics from './_acedemics/page';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import MoreMenuViewProfile from './_components/more_menu_view_profile';
 import MoreActions from './_components/more_menu_view_profile';
+import BasicInfo from './_basic-info/page';
 
 export default function ViewProfile({ children }){
 
@@ -56,11 +57,12 @@ export default function ViewProfile({ children }){
                                         allowScrollButtonsMobile = {!isLargerDevice}
                                         onChange={handleChange}  aria-label="lab API tabs example" 
                                     >
-                                        <Tab label="About" value="1" />
+                                        <Tab label="Summary" value="1" />
                                         <Tab label="Video" value="2" />
                                         <Tab label="Athletics" value="3" />
                                         <Tab label="Key Stats" value="4" />
                                         <Tab label="Academics" value="5" />
+                                        <Tab label="Basic Info" value="6" />
                                     </TabList>
                                 </Grid>
                                 <Grid textAlign={isLargerDevice ? 'right' : 'center'} item xs={1}>
@@ -69,9 +71,7 @@ export default function ViewProfile({ children }){
                             </Grid>
                         </Container>
                     </Box>
-                    <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
-                        <TabPanels />
-                    </Container>
+                    <TabPanels />
                 </TabContext>   
             </Box>
         </>
@@ -83,19 +83,39 @@ function TabPanels(){
     return(
         <>
             <TabPanel value="1">
-                <About />
+                <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
+                    <Summary />
+                </Container>
             </TabPanel>
+            
             <TabPanel sx={{padding: {xs: 0}}} value="2">
-                <Videos />
+                <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
+                    <Videos />
+                </Container>
             </TabPanel>
+
             <TabPanel value="3">
-                <Athletics />
+                <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
+                    <Athletics />
+                </Container>
             </TabPanel>
+
             <TabPanel value="4">
-                <KeyStats />
+                <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
+                    <KeyStats />
+                </Container>
             </TabPanel>
+
+            <TabPanel value="6" sx={{padding: {xs: '10px 0', md: '20px 0'} }}>
+                <Container maxWidth='lg' sx={{paddingLeft: 0, paddingRight: 0}} >
+                    <BasicInfo />
+                </Container>
+            </TabPanel>
+            
             <TabPanel sx={{padding: {xs: '10px 0', md: '20px 0'} }} value="5">
-                <Academics />
+                <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
+                    <Academics />
+                </Container>
             </TabPanel>
         </>
     )
