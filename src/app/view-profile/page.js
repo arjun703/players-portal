@@ -100,7 +100,7 @@ function TabPanels(){
                 </Container>
             </TabPanel>
 
-            <TabPanel value="4">
+            <TabPanel sx={{padding: {xs: '10px 0', md: '20px 0'} }} value="4">
                 <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
                     <KeyStats />
                 </Container>

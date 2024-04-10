@@ -1,5 +1,14 @@
-export default function KeyStats(){
+import { Paper, Stack, Container } from "@mui/material"
+import { useState } from "react";
+import ViewKeyStats from "./view-key-stats";
+
+export default function keyStats(){
+
     return(
-        <div>View Key Stats</div>
+        <>
+            <Stack spacing={2}>
+                <ViewKeyStats />
+            </Stack>        
+        </>
     )
 }
