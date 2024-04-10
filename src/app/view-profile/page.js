@@ -29,18 +29,54 @@ import BasicInfo from './_basic-info/page';
 
 export default function ViewProfile({ children }){
 
-    const [value, setValue] = useState('1');
+    const [value, setValue] = useState('2');
     const  isLargerDevice = useMediaQuery('(min-width:900px)');
-    
+    const [startX, setStartX] = useState(null);
+    const [endX, setEndX] = useState(null);
+
+
+
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };    
+
+    const totalTabs = 6;
+
+    const handleTouchStart = (e) => {
+        setStartX(e.touches[0].clientX);
+      };
     
+      const handleTouchMove = (e) => {
+        setEndX(e.touches[0].clientX);
+      };
+    
+      const handleTouchEnd = () => {
+        if (startX && endX) {
+          if (startX - endX > 50) {
+            // Swipe left
+            console.log("swiped left")
+            console.log("current value", value)
+            setValue((prevValue) => Math.min(prevValue + 1, 6).toString()); // Change 2 to the total number of tabs - 1
+        } else if (endX - startX > 50) {
+            // Swipe right
+            console.log("swiped right")
+            console.log("current value", value)
+            setValue((prevValue) => Math.max(prevValue - 1, 1).toString());
+          }
+        }
+        setStartX(null);
+        setEndX(null);
+      };
+
     return (
         <>
             <Header user={true}></Header>
 
-            <Box id="parentBox">
+            <Box id="parentBox"
+                                    onTouchStart={handleTouchStart}
+                                    onTouchMove={handleTouchMove}
+                                    onTouchEnd={handleTouchEnd}
+            >
                 <TabContext id="parentTabContext" value={value}>  
                     <Box id="parentBox2" sx={{position:'sticky', padding: '10px 0 0 0', top: '0px', 
                         borderBottom: 1, borderTop: 1, borderColor: 'divider', backgroundColor: 'white' }}>
@@ -62,7 +98,7 @@ export default function ViewProfile({ children }){
                                         <Tab label="Athletics" value="3" />
                                         <Tab label="Key Stats" value="4" />
                                         <Tab label="Academics" value="5" />
-                                        <Tab label="Basic Info" value="6" />
+                                        <Tab label="Basic Info" value="6" />   
                                     </TabList>
                                 </Grid>
                                 <Grid textAlign={isLargerDevice ? 'right' : 'center'} item xs={1}>
@@ -71,12 +107,25 @@ export default function ViewProfile({ children }){
                             </Grid>
                         </Container>
                     </Box>
-                    <TabPanels />
+
+                    <div
+                    >
+                        <TabPanels />
+                    </div>
+
                 </TabContext>   
             </Box>
         </>
     );
 
+}
+
+function Tabs(){
+    return(
+        <>
+
+        </>
+    )
 }
 
 function TabPanels(){
