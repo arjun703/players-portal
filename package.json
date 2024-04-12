@@ -31,6 +31,7 @@
     "react-places-autocomplete": "^7.3.0"
   },
   "devDependencies": {
+    "@types/node": "20.12.7",
     "eslint": "^8",
     "eslint-config-next": "14.1.3"
   }

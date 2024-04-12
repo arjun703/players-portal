@@ -82,7 +82,7 @@ export default function ViewProfile({ children }){
                             maxWidth={isLargerDevice && 'md'} 
                             sx={{paddingLeft: !isLargerDevice && '0px!important'}}
                         >
-                            <Grid alignItems={'center'} container>
+                            <Grid id="tabs-holder" alignItems={'center'} container>
                                 <Grid item xs={11}>    
                                     <TabList 
                                         variant={!isLargerDevice && 'scrollable'}

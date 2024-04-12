@@ -7,26 +7,42 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Graduate } from "next/font/google";
 import Button from '@mui/joy/Button';
+import HorizontalLinearStepperAddKeyStats from "./add_key_stats";
+
 
 export default function ViewKeyStats({keyStat}){
+
+    const [isAddingKeyState, setIsAddingKeyState] = useState(false)
     
+
     return(
         <>
-            <Paper sx={{padding: {xs: 1, md: 2}}}>
-                  <div style={{display: 'flex', textAlign: 'center', justifyContent: 'center'}}>
-                    <div>
+                <Paper sx={{padding: {xs: 1, md: 2}}}>
+                {!isAddingKeyState &&
+
+                    <div style={{display: 'flex', textAlign: 'center', justifyContent: 'center'}}>
                         <div>
-                            <KeyIcon sx={{fontSize: '100px'}}/>
+                            <div>
+                                <KeyIcon sx={{fontSize: '100px'}}/>
+                            </div>
+                            <div>
+                                No key stat has been added
+                            </div>
+                            <Button variant="plain" onClick={()=>setIsAddingKeyState(true)}>
+                                ADD NOW
+                            </Button>
                         </div>
-                        <div>
-                            No key stat has been added
-                        </div>
-                        <Button variant="plain" >
-                            ADD NOW
-                        </Button>
                     </div>
-                </div>
-            </Paper>
+                }
+                
+                {
+                    isAddingKeyState && 
+                    <HorizontalLinearStepperAddKeyStats />
+                }
+
+                </Paper>
+            
+
         </>
     )
 }
