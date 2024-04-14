@@ -49,9 +49,9 @@ export default function MoreActions({menuitems}) {
         }}
       >
         {
-          menuitems.map(({label, icon, handler}) => {
+          menuitems.map(({label, icon, handler}, index) => {
             return(
-              <MenuItem onClick={()=>{handleClose();handler()}}>
+              <MenuItem key={index} onClick={()=>{handleClose();handler()}}>
                 <ListItemIcon>
                     {icon}
                 </ListItemIcon>

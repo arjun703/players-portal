@@ -378,7 +378,7 @@ function Teams({teams, handleAddNew, handleEdit, handleDelete}){
                         let  {team_name, year, team_level, starter, jersey_number, schedule_url, team_award, individual_award, other_info} = info
                         team_level = teamLevels.filter(({id}) => id == team_level)[0]['label']
                         return (
-                            <Grid  item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
+                            <Grid key={index} item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
                                 <div class="grid-inner" style={{position: 'relative'}}>
                                     <Paper sx={{ padding: 1 }} elevation={2}>
 

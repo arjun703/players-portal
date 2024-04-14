@@ -296,7 +296,7 @@ function Educations({ educations, editEducation, deleteEducation }) {
                         level = educationLevels.filter(({value}) => level == value)[0]['label']
                         return (
                             
-                            <Grid  item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
+                            <Grid key={index} item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
                                 <div class="grid-inner" style={{position: 'relative'}}>
                                     <Paper sx={{ padding: 1 }} elevation={2}>
                                         <h4 style={{ margin: '5px 0' }}>{field_of_study}</h4>

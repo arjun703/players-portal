@@ -226,7 +226,7 @@ function Trainings({trainings, handleEdit, handleDelete}){
                         let  {training_for_sport, years_of_training, training_notes} = info
                         return (
                             
-                            <Grid  item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
+                            <Grid key={index} item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
                                 <div class="grid-inner" style={{position: 'relative'}}>
                                     <Paper sx={{ padding: 1 }} elevation={2}>
                                         <div>Training for <h4 style={{ margin: '10px 0', display:'inline-block' }}> {training_for_sport}</h4></div>
