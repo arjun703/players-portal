@@ -6,6 +6,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/joy/Button';
 import Typography from '@mui/material/Typography';
+import sportsSettings from './settings'
 
 const steps = ['Select an Sport', 'Fillup Details', 'Preview and Save'];
 
@@ -15,6 +16,9 @@ const data = {selectedSport: '', step2: {
   badminton: {},
   archery: {}
 }}
+
+import DisplayFieldsBasedOnSport from './display_fields_based_on_sports'
+import PreViewKeyStats from "./preview_key_stats";
 
 export default function HorizontalLinearStepper() {
 
@@ -38,13 +42,7 @@ export default function HorizontalLinearStepper() {
     setActiveStep(0);
   };
 
-  const sports = [
-      {label: 'Soccer',value: 'soccer'}, 
-      {label: 'Hockey',value: 'hockey'},
-      {label: 'Badminton',value: 'badminton'},
-      {label: 'Archery',value: 'archery'}
-  ]
-
+  const sports = sportsSettings.sports
 
   return (
     <Box sx={{ width: '100%'}} >
@@ -78,14 +76,21 @@ export default function HorizontalLinearStepper() {
                   value={selectedSport}
                   onChange={(e)=> { setSelectedSport(e.target.value) }}
               >   
-                  {sports.map(({label, value},i) => (<MenuItem key={i} value={value}  >{label}</MenuItem>))}
+                  {sports.map(({label, id},i) => (<MenuItem key={i} value={id}  >{label}</MenuItem>))}
               </Select>
             </FormControl>
-          ): (
-            <>
-
-            </>
-          )
+          ):
+            activeStep === 1 ?
+            (
+              <>
+                <DisplayFieldsBasedOnSport selectedSport = {selectedSport} />
+              </>
+            )
+            : (
+              <>
+                <PreViewKeyStats />
+              </>
+            )
         }
       </div>
 

@@ -38,18 +38,7 @@ export default function BasicInfo(){
         secondaryEmail: "abc@abc.com"
     })
 
-    useEffect(() => {
-        const floatingButton = document.querySelector('.floatingButton');
-        if (floatingButton) {
-          const rect = floatingButton.getBoundingClientRect();
-          const top = rect.top - window.scrollY
-          const left = rect.left 
-          floatingButton.style.position = 'fixed';
-          floatingButton.style.bottom = `20px`;
-          floatingButton.style.left = `${left}px`;
-          console.log(top, left)
-        }
-      }, []);
+
 
     return(
         <div style={{ position: 'relative' }}>
@@ -72,9 +61,7 @@ export default function BasicInfo(){
                     </Stack>
                 </Grid>
             </Grid>
-            <div class="floatingButton" style={{ position: 'absolute', bottom: '20px', right: 0 }}>
-                <FloatingActionButton />
-            </div>
+
         </div>
     )
 }

@@ -23,7 +23,6 @@ import KeyStats from './_key-stats/page';
 import Athletics  from './_athletics/page';
 import Academics from './_acedemics/page';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import MoreMenuViewProfile from './_components/more_menu_view_profile';
 import MoreActions from './_components/more_menu_view_profile';
 import BasicInfo from './_basic-info/page';
 
@@ -33,7 +32,6 @@ export default function ViewProfile({ children }){
     const  isLargerDevice = useMediaQuery('(min-width:900px)');
     const [startX, setStartX] = useState(null);
     const [endX, setEndX] = useState(null);
-
 
 
     const handleChange = (event, newValue) => {
@@ -99,7 +97,7 @@ export default function ViewProfile({ children }){
                                     </TabList>
                                 </Grid>
                                 <Grid textAlign={isLargerDevice ? 'right' : 'center'} item xs={1}>
-                                    <MoreActions />
+                                    
                                 </Grid>
                             </Grid>
                         </Container>
@@ -120,13 +118,6 @@ export default function ViewProfile({ children }){
 
 }
 
-function Tabs(){
-    return(
-        <>
-
-        </>
-    )
-}
 
 function TabPanels(){
     return(
@@ -143,7 +134,7 @@ function TabPanels(){
                 </Container>
             </TabPanel>
 
-            <TabPanel value="3">
+            <TabPanel value="3" sx={{padding: {xs: '10px 0', md: '20px 0'} }}>
                 <Container maxWidth='md' sx={{paddingLeft: 0, paddingRight: 0}} >
                     <Athletics />
                 </Container>

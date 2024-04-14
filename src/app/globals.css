@@ -53,3 +53,7 @@ html, body {
 #tabs-holder .Mui-disabled{
     display: none!important;
 }
+
+.grid-inner:hover .tooltip-wrapper{
+    display: block!important;
+}

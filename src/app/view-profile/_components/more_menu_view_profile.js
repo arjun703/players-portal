@@ -1,16 +1,13 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import  ListItemIcon  from '@mui/material/ListItemIcon';
 import  ListItemText from '@mui/material/ListItemText';
-import FlagIcon from '@mui/icons-material/Flag';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import IconButton from '@mui/material/IconButton';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-export default function MoreActions() {
+export default function MoreActions({menuitems}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -19,6 +16,7 @@ export default function MoreActions() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  
   const  isLargerDevice = useMediaQuery('(min-width:900px)');
 
   return (
@@ -50,19 +48,19 @@ export default function MoreActions() {
             horizontal: 'right',
         }}
       >
-        <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-                <ContentCopyIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Copy Link to Profile</ListItemText>
-        </MenuItem>
+        {
+          menuitems.map(({label, icon, handler}) => {
+            return(
+              <MenuItem onClick={()=>{handleClose();handler()}}>
+                <ListItemIcon>
+                    {icon}
+                </ListItemIcon>
+                <ListItemText>{label}</ListItemText>
+              </MenuItem>
+            )
+          })
+        }
 
-        <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-                <FlagIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Report Profile</ListItemText>
-        </MenuItem>
       </Menu>
     </div>
   );

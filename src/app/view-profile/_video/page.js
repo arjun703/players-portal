@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors,
@@ -14,7 +14,7 @@ import {useSortable} from '@dnd-kit/sortable';
 
 import {CSS} from '@dnd-kit/utilities';
 
-import { Paper, IconButton, Typography, Button } from '@mui/material';
+import { Paper, IconButton, Typography } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,11 +27,43 @@ import { TransitionGroup } from 'react-transition-group';
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import DialogBox from './dialog';
+import {pOSTRequest, dELETErequest} from '@/app/_components/file_upload';
+import { VideoLibrary } from '@mui/icons-material';
+import Button from '@mui/joy/Button';
+import DialogContentText from '@mui/material/DialogContentText';
+
+import Skeleton from '@mui/material/Skeleton';
+import Stack from '@mui/material/Stack';
+import FloatingActionButton from '@/app/_components/floating_action_btn';
+import AddIcon from '@mui/icons-material/Add';
+
 
 export default function Videos() {
-  const [videos, setVideos] = useState([{id: 1, title: 'Video f sfdsddfsf', thumbnail: '/files/t1.jpg' }, {id: 2, title: 'Video 2', thumbnail: '/files/t2.jpg'}]);
+  const [videos, setVideos] = useState([]);
   const [addingNewVideo, setAddingNewVideo] = useState(false)
   const [haveDragChagesBeenMade, setHaveDragChagesBeenMade] = useState(false)
+  const [isLoadingVideos, setIsLoadingVideos] = useState(false)
+
+    useEffect(() => {
+      async function fetchVideos() {
+          try {
+              setIsLoadingVideos(true)
+              const response = await fetch('/api/video'); // Adjust the API endpoint URL as needed
+              if (!response.ok) {
+                  throw new Error('Failed to fetch videos');
+              }
+              const data = await response.json();
+              setIsLoadingVideos(false)
+              setVideos(data.videos);
+          } catch (error) {
+              alert( error.message)
+          }
+      }
+      fetchVideos();
+
+  }, []); 
+
+
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -58,32 +90,63 @@ export default function Videos() {
   }
   
   const handleSaveDragChanges = () => {
-
-    alert("Drag Changes Saved")
     setHaveDragChagesBeenMade(false)
-
   }
-  
+
   const handleAddNewVideo = () => {
     setAddingNewVideo(true);
   }
 
-  const saveAddedNewVideo = (videoTitle, videoURL, videoType) => {
-    setAddingNewVideo(!addingNewVideo)
-    setTimeout(()=>{
-      setVideos(prevVideos => [
-        { id: prevVideos.length + 1, title: videoTitle, url: videoURL, videoType },
-        ...prevVideos
-      ]);
-    }, 1000)
+  const saveAddedNewVideo = async (videoTitle, videoURL, videoType) => {
+    const formData = new FormData();
+    formData.append('title', videoTitle);
+    formData.append('video_url', videoURL)
+    const result = await pOSTRequest(formData, 'api/video/youtube/')
+    if(result.success){
+      setAddingNewVideo(!addingNewVideo)
+      setTimeout(()=>{
+        setVideos(prevVideos => [
+          result.video,
+          ...prevVideos
+        ]);
+      }, 100)
+    }else{
+      alert(result.msg)
+    }
+  }
+  
+  const handleAddNewVideoCustom= async (title, thumbNail, video)=>{
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('thumbnail', thumbNail)
+    formData.append('video', video)
+    const result = await pOSTRequest(formData, 'api/video/custom/')
+    if(result.success){
+      setAddingNewVideo(!addingNewVideo)
+
+      setTimeout(()=>{
+        setVideos(prevVideos => [
+          result.video,
+          ...prevVideos
+        ]);
+      }, 100)
+
+    }else{
+      alert(result.msg)
+    }
   }
 
   const handleCancelAddNewVideo = () => {
     setAddingNewVideo(false)
   }
 
-  const handleDelete = (id)=>{
-    setVideos(prevVideos => prevVideos.filter(pv => pv.id !== id ))
+  const handleDelete = async (id)=>{
+    const formData = new FormData();
+    formData.append('video_id', id);
+    const response  = await dELETErequest(formData,'api/video/')
+    if(response.success && response.video_id === id){
+      setVideos(prevVideos => prevVideos.filter(pv => pv.id !== id ))
+    }
   }
 
   return (
@@ -98,7 +161,8 @@ export default function Videos() {
         && (
           <AddNewVideoForm 
             handleCancelAddNewVideo={handleCancelAddNewVideo} 
-            handleAddNewVideo={saveAddedNewVideo} 
+            handleAddNewVideoYouTube={saveAddedNewVideo} 
+            handleAddNewVideoCustom={handleAddNewVideoCustom}
           />
         )
     }
@@ -109,33 +173,7 @@ export default function Videos() {
                 items={videos}
                 strategy={verticalListSortingStrategy}
               >
-                <Paper sx={{ p: {xs: '10px 5px', md: 3}, marginTop: {md: '20px', xs: '0px'}}}>
-                  <Grid container  sx={{alignItems: 'center'}}>
-                    <Grid item xs style={{marginBottom: 0}}>
-                      <Divider color="blue" sx={{opacity: 0.4}}></Divider>
-                    </Grid>
-                    <Grid  item auto >
-                      {
-                        haveDragChagesBeenMade && (
-                          <div>
-                            <Grow in={true}>
-                              <Button onClick={()=>setHaveDragChagesBeenMade(false)} sx={{boxShadow: 'none', borderRadius: '20px'}}  >Cancel</Button>
-                            </Grow>
-                            <Grow in={true} onClick={handleSaveDragChanges}>
-                              <Button sx={{boxShadow: 'none', borderRadius: '20px'}} variant="contained" >Save Changes</Button>
-                            </Grow>
-                          </div>
-                        )
-                      }
-                      { !haveDragChagesBeenMade && 
-                        <div onClick={handleAddNewVideo} >
-                          <Tooltip title="Add New Video">
-                              <IconButton sx={{':hover': { color: 'blue'}, backgroundColor: 'blue', color: 'white', border: '1px solid blue'}}><LibraryAddIcon /></IconButton>
-                          </Tooltip>
-                        </div>
-                      }
-                    </Grid>
-                  </Grid>
+                <Paper sx={{ p: {xs: '10px 5px', md: 3}, marginTop: {md: '20px', xs: '10px'}}}>
                   <TransitionGroup>
                     {
                       videos
@@ -147,10 +185,12 @@ export default function Videos() {
                     }
                   </TransitionGroup>
                 </Paper>
+                <FloatingActionButton btnIcon={<AddIcon />} btnTitle='Add New Video' handler={handleAddNewVideo} />
               </SortableContext>
+
           )
           : ( !addingNewVideo &&
-            <DisplayNoVideos />
+            <DisplayNoVideos isLoadingVideos={isLoadingVideos}  openAddNewVideoForm={handleAddNewVideo}/>
           )
         }
     </DndContext>
@@ -159,11 +199,60 @@ export default function Videos() {
 
 }
 
-function DisplayNoVideos(){
+function DisplayNoVideos({isLoadingVideos, openAddNewVideoForm}){
   return(
-    <>
-      No Videos
-    </>
+    <Paper sx={{ p: {xs: '10px 5px', md: 3}, marginTop: '20px'}}>
+      {!isLoadingVideos &&
+        <div style={{display: 'flex', textAlign: 'center', justifyContent: 'center'}}>
+            <div>
+                <div>
+                    <VideoLibrary sx={{fontSize: '100px'}}/>
+                </div>
+                <div>
+                    No any video has been added
+                </div>
+                <Button variant="plain" onClick={openAddNewVideoForm}>
+                    ADD NEW
+                </Button>
+            </div>
+        </div>
+      }
+      {isLoadingVideos && 
+        <Stack spacing={1}>
+
+          <Grid container sx={{alignItems: 'center'}} spacing={2}>
+            <Grid item  auto><Skeleton variant="rectangular" width={200} height={80} /></Grid>
+            <Grid item xs><Skeleton variant="text" sx={{ fontSize: '1rem' }} /></Grid>
+            <Grid item auto><Skeleton variant="circular" width={40} height={40} /></Grid>
+          </Grid>
+
+          <Grid container sx={{alignItems: 'center'}} spacing={2}>
+            <Grid item  auto><Skeleton variant="rectangular" width={200} height={80} /></Grid>
+            <Grid item xs><Skeleton variant="text" sx={{ fontSize: '1rem' }} /></Grid>
+            <Grid item auto><Skeleton variant="circular" width={40} height={40} /></Grid>
+          </Grid>
+
+          <Grid container sx={{alignItems: 'center'}} spacing={2}>
+            <Grid item  auto><Skeleton variant="rectangular" width={200} height={80} /></Grid>
+            <Grid item xs><Skeleton variant="text" sx={{ fontSize: '1rem' }} /></Grid>
+            <Grid item auto><Skeleton variant="circular" width={40} height={40} /></Grid>
+          </Grid>
+
+          <Grid container sx={{alignItems: 'center'}} spacing={2}>
+            <Grid item  auto><Skeleton variant="rectangular" width={200} height={80} /></Grid>
+            <Grid item xs><Skeleton variant="text" sx={{ fontSize: '1rem' }} /></Grid>
+            <Grid item auto><Skeleton variant="circular" width={40} height={40} /></Grid>
+          </Grid>
+
+          <Grid container sx={{alignItems: 'center'}} spacing={2}>
+            <Grid item  auto><Skeleton variant="rectangular" width={200} height={60} /></Grid>
+            <Grid item xs><Skeleton variant="text" sx={{ fontSize: '1rem' }} /></Grid>
+            <Grid item auto><Skeleton variant="circular" width={40} height={40} /></Grid>
+          </Grid>
+
+        </Stack>
+    }
+    </Paper>
   )
 }
 
@@ -182,10 +271,10 @@ export function SortableVideoItem({video, handleDelete}) {
     transition,
   };
 
-  console.log(video)
 
-  const handleDeleteInner = (id) => {
-    handleDelete(id)
+  const handleDeleteInner = async (id) => {
+    await  handleDelete(id)
+    handleCancel()
   }
   
   const [isWaitingForConfirmation, setIsWaitingForConfimation] = useState({waiting: false, id: false})
@@ -196,6 +285,12 @@ export function SortableVideoItem({video, handleDelete}) {
 
   const handleCancel = () => {
     setIsWaitingForConfimation({waiting: false, id: false })
+  }
+
+  const [isWatchingThisVideo,setIsWatchingThisVideo] = useState(false)
+
+  const handleCancelWatching = ()=>{
+    setIsWatchingThisVideo(false)
   }
 
   return (
@@ -209,12 +304,13 @@ export function SortableVideoItem({video, handleDelete}) {
           </div>
         </Grid>
         <Grid item auto>
-          <div>
+          <div
+            onClick={()=> {setIsWatchingThisVideo(true)}}
+          >
             {
-              video.thumbnail?.length > 0 
-              ? <img src={video.thumbnail} alt="Thumbnail"  style={{borderRadius: '15px', marginRight: '15px', maxWidth: '150px', maxHeight: '150px' }} />
+              video.thumbnail_src?.length > 0 
+              ? <img src={'/files/'+video.thumbnail_src} alt={video.title}  style={{borderRadius: '15px', marginRight: '15px', maxWidth: '150px', maxHeight: '150px' }} />
               : <img src={'/default.png'} alt="Thumbnail"  style={{borderRadius: '15px', marginRight: '15px', maxWidth: '150px', maxHeight: '150px' }} />
-              
             }
           </div>
         </Grid>
@@ -234,10 +330,68 @@ export function SortableVideoItem({video, handleDelete}) {
       {
         isWaitingForConfirmation.waiting && 
         <DialogBox 
+          maxWidth='xs'
+          dialogTitle="Delete video" 
+          dialogContent={<DialogContentText>Are you sure to delete?</DialogContentText>}
           handleConfirm = {() => {handleDeleteInner(isWaitingForConfirmation.id)}}
           handleCancel = {handleCancel}
         />
       }
+
+      {
+        isWatchingThisVideo && 
+        <DialogBox 
+          maxWidth='lg'
+          dialogTitle={'Watch '+ video.title} 
+          dialogContent={<WatchVideoBody video={video} />}
+          handleCancel = {handleCancelWatching}
+        />
+      }
+
     </div>
   );
+}
+
+function WatchVideoBody({video}){
+  const isLarger = window.innerWidth > 500
+  return(
+    <>
+      {
+        video.type=='youtube' &&
+        <div className="video-container" style={{justifyContent:'center', background:'black', display: 'flex'}}>
+            <iframe
+                style={{border:'none', width: isLarger ? '60%' : '100%' , aspectRatio: '16/9'}}
+                src={getYoutubeEmbedUrl(video.video_src)}
+                
+                title="YouTube Video"
+            ></iframe>
+        </div>
+      }
+      {
+        video.type=='custom' &&
+        <div className="video-container" style={{ background:'black',justifyContent:'center', display: 'flex'}}>
+            <video style={{ width: isLarger ? '60%' : '100%' , aspectRatio: '16/9'}} controls >
+                <source src={'/files/'+video.video_src}  />
+                Your browser does not support the video tag.
+            </video>
+        </div>
+      }
+    </>
+  )
+}
+
+function getYoutubeEmbedUrl(youtubeUrl) {
+  // Regular expression to extract the video ID from YouTube URLs
+  const videoIdRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = youtubeUrl.match(videoIdRegex);
+
+  if (match) {
+      const videoId = match[1];
+      // Construct the embed URL
+      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      return embedUrl;
+  } else {
+      // Handle invalid YouTube URL
+      return null;
+  }
 }

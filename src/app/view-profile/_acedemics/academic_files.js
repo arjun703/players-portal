@@ -6,10 +6,16 @@ import { useState, useEffect } from "react";
 import {  LocalizationProvider ,DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Graduate } from "next/font/google";
+import { Graduate, Handlee } from "next/font/google";
 import Button from '@mui/joy/Button';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import { styled } from '@mui/material/styles';
+import MoreActions from "../_components/more_menu_view_profile";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DownloadIcon from '@mui/icons-material/Download';
+import DeleteIcon from "@mui/icons-material/Delete";
+import DialogBox from "../_video/dialog";
+import DialogContentText from '@mui/material/DialogContentText';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -24,23 +30,34 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
   });
 
-function AddNewAcademicFileForm({handleCancel, handleAddAcademicFile}){
+const fileTypes = [
+    {label: 'Transcript', value: 'transcript'}, 
+    {label: 'Report Card', value:'report_card'},
+    {label: 'SAT Info', value:'sat'},
+    {label: 'ACT Info', value:'act'},
+    {label: 'PSAT Info', value:'psat'},
+    {label: 'SAT II Info', value:'satii'}
+]
+
+
+function AddNewAcademicFileForm({academicFile=false, handleCancel, handleAddAcademicFile}){
     
-    const [level, setLevel] = useState('')
-    const [fieldOfStudy, setFieldOfStudy] = useState('')
-    const [institution, setInstitution] = useState('')
-    const [startDate, setStartDate] = useState('')
-    const [endDate, setEndDate] = useState('')
-    const [extraInfo, setExtraInfo] = useState('')
-    
-    const educationLevels = [
-        {label: 'Transcript', value: 'transcript'}, 
-        {label: 'Report Card', value:'report_card'},
-        {label: 'SAT', value:'sat'},
-        {label: 'ACT', value:'act'},
-        {label: 'PSAT', value:'psat'},
-        {label: 'SAT II', value:'satii'}
-    ]
+    const [type, setType] = useState('')
+    const [description, setDescription] = useState('')
+    const [file, setFile] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const validateAddNew = async  ()=>{
+        if(type.trim().length == 0  || !file){
+            alert("Please fill up all the fields")
+            return
+        }
+        setIsLoading(true)
+        const result = await handleAddAcademicFile(type, file, description)
+        if(!result){
+            setIsLoading(false)
+        }
+    }
+    const isMobile = window.innerWidth < 500
 
     return(
         <>
@@ -49,7 +66,12 @@ function AddNewAcademicFileForm({handleCancel, handleAddAcademicFile}){
                     <Button  variant="plain"  startDecorator={<ArrowBackIosIcon />}>Cancel</Button>
                 </Grid>
                 <Grid item xs>
-                    <Divider></Divider>
+                    <Divider sx={{margin: '0 20px'}}></Divider>
+                </Grid>
+                <Grid item sx={{ display: isMobile ? 'flex' : 'none' }} auto onClick={validateAddNew}>
+                    <Button disabled={isLoading} variant="solid" >
+                       Add
+                    </Button>
                 </Grid>
             </Grid>
             <Container maxWidth={'sm'}>
@@ -61,16 +83,16 @@ function AddNewAcademicFileForm({handleCancel, handleAddAcademicFile}){
                                 id="demo-simple-select"
                                 labelId="demo-simple-select-label"
                                 label="Level"
-                                onChange={(e)=> {setLevel(e.target.value)}}
+                                onChange={(e)=> {setType(e.target.value)}}
                             >   
-                                {educationLevels.map(({label, value},i) => (<MenuItem key={i} value={value}>{label}</MenuItem>))}
+                                {fileTypes.map(({label, value},i) => (<MenuItem key={i} value={value}>{label}</MenuItem>))}
                             </Select>
                         </FormControl>
                     </Grid>
 
                     <Grid item xs={12} sx={{padding: '0 10px', marginTop: {xs: 2}}}>
                         <FormControl fullWidth>
-                            <TextField onChange={(e)=> {setFieldOfStudy(e.target.value)}} label="Description" variant="outlined" />
+                            <TextField onChange={(e)=> {setDescription(e.target.value)}} label="Description" variant="outlined" />
                         </FormControl>
                     </Grid>
 
@@ -83,8 +105,20 @@ function AddNewAcademicFileForm({handleCancel, handleAddAcademicFile}){
                                 tabIndex={-1}
                                 startDecorator={<TableChartIcon />}
                             >
-                                Choose File
-                                <VisuallyHiddenInput type="file" />
+                                {file?.name || 'Choose Academic File'}
+                                <VisuallyHiddenInput 
+                                    onChange={(e)=>{
+                                        const file= e.target.files[0] || null;
+                                        if(file){                                    
+                                            setFile(file)
+                                            setIsLoading(false)
+                                        }else{
+                                            setIsLoading(false)
+                                            setFile(false)
+                                        }
+                                    }} 
+                                    type="file" 
+                                />
                             </Button>
                         </FormControl>
                     </Grid>
@@ -92,7 +126,7 @@ function AddNewAcademicFileForm({handleCancel, handleAddAcademicFile}){
             </Container>
 
             <div style={{display:'flex', marginTop: '20px', alignItems: 'center',  justifyContent: 'center'}}>
-                <Button variant="solid"  startDecorator={<TableChartIcon />}>
+                <Button onClick={validateAddNew}  loadingPosition="start" loading={isLoading} variant="solid"  startDecorator={<TableChartIcon />}>
                     Add Academic File
                 </Button>
             </div>
@@ -101,84 +135,296 @@ function AddNewAcademicFileForm({handleCancel, handleAddAcademicFile}){
     );
 }
 
-function EditAcademicFile({edu}){
+function EditAcademicInfo({academicFile, handleCancel, handleEdit}){
+    console.log(academicFile.info)
+    const [academicFileInfo, setAcademicFileInfo] = useState(academicFile.info)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const handleChange = (value, prop) => {
+        setAcademicFileInfo((prevAcademicFileInfo)=>({
+            ...prevAcademicFileInfo,
+            [prop] : value
+        }))
+    }
+
+    const validateEdit = async () => {
+        if(academicFileInfo.type.trim().length == 0 || academicFileInfo.file_src.trim().length == 0){
+            alert('Title can\'t be blank')
+            return
+        }
+        setIsLoading(true)
+        const result = await handleEdit(academicFileInfo)
+        if(!result){
+            setIsLoading(false)
+        }
+    }
+    const isMobile = window.innerWidth < 500
+
     return(
         <>
+            <Grid container sx={{alignItems: 'center'}}>
+                <Grid item auto onClick={handleCancel}>
+                    <Button  variant="plain"  startDecorator={<ArrowBackIosIcon />}>Cancel</Button>
+                </Grid>
+                <Grid item xs>
+                    <Divider sx={{margin: '0 20px'}}></Divider>
+                </Grid>
+                <Grid item sx={{ display: isMobile ? 'flex' : 'none' }} auto onClick={validateEdit}>
+                    <Button disabled={isLoading} variant="solid" >
+                       Edit
+                    </Button>
+                </Grid>
+            </Grid>
+            <Container maxWidth={'sm'}>
+                <Grid container sx={{marginTop: 1, maxWidth: 'xs'}}>
+                    <Grid item xs={12}  sx={{padding: '0 10px', marginTop: {xs: 2}}}>
+                        <FormControl fullWidth >
+                            <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                            <Select
+                                id="demo-simple-select"
+                                labelId="demo-simple-select-label"
+                                label="Level"
+                                value={academicFileInfo.type}
+                                onChange={(e)=> {handleChange(e.target.value, 'type')}}
+                            >   
+                                {fileTypes.map(({label, value},i) => (<MenuItem key={i} value={value}>{label}</MenuItem>))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
 
+                    <Grid item xs={12} sx={{padding: '0 10px', marginTop: {xs: 2}}}>
+                        <FormControl fullWidth>
+                            <TextField 
+                                onChange={(e)=> {handleChange(e.target.value, 'description')}} 
+                                label="Description" 
+                                value={academicFileInfo.description}
+                                variant="outlined" 
+                            />
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </Container>
+
+            <div style={{display:'flex', marginTop: '20px', alignItems: 'center',  justifyContent: 'center'}}>
+                <Button variant="solid" loading={isLoading} loadingPosition="start" onClick={validateEdit} startDecorator={<TableChartIcon />}>
+                    Edit Academic Info
+                </Button>
+            </div>
         </>
     )
 }
 
 export default function AcademicFiles({academicFiles, handleEditAcademicFile, handleAddAcademicFile, handleDeleteAcademicFile}){
     
-    const [addingNewEducation, setAddingNewEducation] = useState(false)
-    const [editingEducation, setEditingEducation] = useState({isEditing: false, id: false})
+    const [addingNewAcademicFile, setAddingNewAcademicFile] = useState(false)
+    const [editingAcademicInfo, setEditingAcademicInfo] = useState({isEditing: false, academicFile: false})
+    const [deletingAcademicFile, setDeletingAcademicFile] = useState({isWaitingDeletion: false, academicFile: false})
 
-    const handleInitiateAddNewAcademicFile =() => {setAddingNewEducation(true)}
-    const closeAddNewAcademicFile = () => {setAddingNewEducation(false)}
-    const closeEditAcademicFile = () => {setEditingEducation({isEditing:false, id: false})}
-    const handleAddAcademicFileInner = () => {}
+    const handleInitiateAddNewAcademicFile =() => {setAddingNewAcademicFile(true)}
+    
+    const handleAddAcademicFileInner = async (type, file, description) => {
+        
+        const result = await handleAddAcademicFile(type, file, description)
+        if(result){
+            closeAddNewAcademicFile()
+            return true
+        }else{
+            return false;
+        }
+    }
+
+    const closeAddNewAcademicFile = () => {setAddingNewAcademicFile(false)}
+
+    const handleInitiateEditAcademicFile =(academicFile) => {setEditingAcademicInfo({isEditing: true, academicFile: academicFile})}
+    
+    const handleEditAcademicFileInner = async (academicFileInfo) => {
+        const result = await handleEditAcademicFile({id: editingAcademicInfo.academicFile.id, info: academicFileInfo})
+        if(result){
+            closeEditAcademicFile()
+            return true
+        }
+        return false
+    }
+    
+    const closeEditAcademicFile = () => {setEditingAcademicInfo({isWaitingDeletion: false, academicFile: false})}
+    
+    const handleInitiateDeleteAcademicFile = (academicFile) => {setDeletingAcademicFile({isWaitingDeletion: true, academicFile: academicFile})}
+    const handleDeleteAcademicFileInner = async (academicFileInfo) => {
+        const result = await handleDeleteAcademicFile( deletingAcademicFile.academicFile.id)
+        if(result){
+            closeDeleteAcademicFile()
+            return true
+        }
+        return false
+    }
+    
+    const closeDeleteAcademicFile = () => {setDeletingAcademicFile({isWaitingDeletion: false, academicFile: false})}
 
     return(
         <>
             <Paper sx={{padding: {xs: 1, md: 2}}}>
                 {
-                    addingNewEducation
-                        ? <AddNewAcademicFileForm handleCancel={closeAddNewAcademicFile} handleAddAcademicFile={handleAddAcademicFileInner} />
-                        : editingEducation.isEditing
-                            ? <EditAcademicFile />
+                    addingNewAcademicFile
+                        ? <AddNewAcademicFileForm 
+                            handleCancel={closeAddNewAcademicFile} 
+                            handleAddAcademicFile={handleAddAcademicFileInner} 
+                        />
+                        : editingAcademicInfo.isEditing
+                            ? <EditAcademicInfo
+                                academicFile={editingAcademicInfo.academicFile}
+                                handleCancel={closeEditAcademicFile}
+                                handleEdit={handleEditAcademicFileInner}
+                            />
                             :  <div>
-                                    <>
-                                        {academicFiles.length ?
-                                            <Grid container sx={{alignItems: 'center'}}>
-                                                <Grid item xs>
-                                                    <Divider color="blue" sx={{opacity: 0.4}}></Divider>
-                                                </Grid>
-                                                <Grid item>
-                                                    <Tooltip onClick={handleInitiateAddNewAcademicFile} title="Add New Academic File">
-                                                        <IconButton 
-                                                            sx={{':hover': { color: 'blue'}, backgroundColor: 'blue', 
-                                                                color: 'white', border: '1px solid blue'}}
-                                                        >
-                                                            <LibraryAddIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </Grid>
-                                            </Grid>
-                                            : ''
-                                        }
-                                    </>
+
                                     {
                                         academicFiles.length > 0
-                                            ?   <TransitionGroup>
-                                                    {
-                                                        academicFiles.map((e, index) => (
-                                                            <Collapse key={index}>
-                                                                
-                                                            </Collapse>
-                                                        ))
-                                                    }
-                                                </TransitionGroup>
+                                            ?   <>
+                                                    <DisplayAcademicFileHeader handleInitiateAddNewAcademicFile={handleInitiateAddNewAcademicFile} />
+                                                    <DisplayAcademicFiles 
+                                                        academicFiles={academicFiles} 
+                                                        handleEdit={handleInitiateEditAcademicFile}
+                                                        handleDelete={handleInitiateDeleteAcademicFile}
+                                                    />
+                                                </>   
+
                                             
-                                            :   <div style={{display: 'flex', textAlign: 'center', justifyContent: 'center'}}>
-                                                    <div>
-                                                        <div>
-                                                            <TableChartIcon sx={{fontSize: '100px'}}/>
-                                                        </div>
-                                                        <div>
-                                                            No any academic file has been added
-                                                        </div>
-                                                        <Button variant="plain" onClick={handleInitiateAddNewAcademicFile}>
-                                                            ADD NEW
-                                                        </Button>
-                                                    </div>
-                                                </div>
+                                            :   <DisplayNoAcademicFile 
+                                                    handleInitiateAddNewAcademicFile={handleInitiateAddNewAcademicFile}
+                                                />
                 
                                     }
                                 </div>
                 }
 
             </Paper>
+
+            {
+                deletingAcademicFile.isWaitingDeletion &&
+                (
+                    <DialogBox
+                        maxWidth='xs' 
+                        dialogTitle='Delete Academic Info'
+                        dialogContent={<DialogContentText>Are you sure to delete?</DialogContentText>}
+                        handleCancel={closeDeleteAcademicFile}
+                        handleConfirm={handleDeleteAcademicFileInner}
+                    />
+                )
+            }
+
         </>
+    )
+}
+
+function DisplayAcademicFileHeader({handleInitiateAddNewAcademicFile}){
+    return(
+        <Grid container sx={{alignItems: 'center'}}>
+            <Grid item>
+                <h3 style={{margin: 0}}>Academic Info</h3>
+            </Grid>
+            <Grid item xs>
+                <Divider sx={{margin: '0 20px'}}></Divider>
+            </Grid>
+            <Grid item>
+                <Tooltip onClick={handleInitiateAddNewAcademicFile} title="Add New Academic File">
+                    <IconButton 
+                        sx={{':hover': { color: 'blue'}, backgroundColor: 'blue', 
+                            color: 'white', border: '1px solid blue'}}
+                    >
+                        <TableChartIcon />
+                    </IconButton>
+                </Tooltip>
+            </Grid>
+        </Grid>
+    )
+}
+
+function DisplayAcademicFiles({academicFiles, handleEdit, handleDelete}){
+
+    const isMobile = window.innerWidth < 500
+
+    const downloadAcademicFile = (file_src)=>{
+        const anchor = document.createElement('a');
+        anchor.style.display = 'none';
+        anchor.href = file_src;
+        anchor.setAttribute('download', '');
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    }
+
+    return (
+        <TransitionGroup >
+            <Grid sx={{marginTop: '5px'}}  container spacing={2}>
+                {
+                    academicFiles.map(({id, info}, index) => {
+                        if (typeof info === 'string') {
+                            info = JSON.parse(info)
+                        }
+                        let {type, file_src, description } = info
+                        type = fileTypes.filter(({value}) => type == value)[0]['label']
+                        return (
+                            
+                            <Grid  item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
+                                <div class="grid-inner" style={{position: 'relative'}}>
+                                    <Paper sx={{ padding: 1 }} elevation={2}>
+                                        <h4 style={{ margin: '5px 0' }}>{type}</h4>
+                                        <p>{description}</p>
+                                    </Paper>
+                                    <div className="tooltip-wrapper"  
+                                        style={{position:'absolute', display: !isMobile ? 'none': 'block!important',  bottom: '10px', right: '10px'}} 
+                                    >
+                                        <Tooltip   title="Options">
+                                            <MoreActions 
+                                                menuitems={
+                                                    [
+                                                        {
+                                                            label:'Edit ' + type, 
+                                                            icon: <ModeEditIcon variant='small' />,
+                                                            handler: ()=>{handleEdit({id: id, info: info})}
+                                                        },
+
+                                                        {
+                                                            label:'Download '+type, 
+                                                            icon: <DownloadIcon variant='small' />,
+                                                            handler: ()=>{downloadAcademicFile('/files/'+file_src)}
+                                                        },
+
+                                                        {
+                                                            label:'Delete ' + type, 
+                                                            icon: <DeleteIcon variant='small' />,
+                                                            handler: ()=>{handleDelete({id: id, info: info})}
+                                                        }
+                                                    ]
+                                                } 
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                </div>
+                            </Grid>
+                        )
+                    })
+                }
+            </Grid>
+        </TransitionGroup>
+    )
+}
+
+function DisplayNoAcademicFile({handleInitiateAddNewAcademicFile}){
+    return(
+
+        <div style={{display: 'flex', textAlign: 'center', justifyContent: 'center'}}>
+            <div>
+                <div>
+                    <TableChartIcon sx={{fontSize: '100px'}}/>
+                </div>
+                <div>
+                    No any academic file has been added
+                </div>
+                <Button variant="plain" onClick={handleInitiateAddNewAcademicFile}>
+                    ADD NEW
+                </Button>
+            </div>
+        </div>
     )
 }
