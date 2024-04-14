@@ -1,4 +1,10 @@
 import mysql from 'mysql';
+console.log("below are db creds")
+console.log(process.env.HOST)
+console.log(process.env.USER)
+console.log(process.env.DB)
+console.log(process.env.PASS)
+console.log("above are db creds ")
 
 const connection = mysql.createConnection({
     host: process.env.HOST,
