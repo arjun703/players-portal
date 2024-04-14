@@ -16,6 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import DialogBox from "../_video/dialog";
 import DialogContentText from '@mui/material/DialogContentText';
+import { COMPILER_INDEXES } from "next/dist/shared/lib/constants";
 
 
 function AddNewOrEditPressOrInterviewForm({defaultPressOrInterviewInfo=false, handleCancel, handleSubmit}){
@@ -220,7 +221,7 @@ function PressesOrInterviews({pressesOrInterviews, handleEdit, handleDelete}){
                         let  {title, link, short_description} = info
                         return (
                             
-                            <Grid key={index}  item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
+                            <Grid key={COMPILER_INDEXES}  item xs={12} sm={6} md={4} sx={{position: 'relative', '&:hover .tooltip': {display: 'block'} }} >
                                 <div class="grid-inner" style={{position: 'relative'}}>
                                     <Paper sx={{ padding: 1 }} elevation={2}>
                                         <h4 style={{ margin: '5px 0' }}>{title}</h4>

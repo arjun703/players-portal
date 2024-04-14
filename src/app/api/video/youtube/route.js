@@ -1,7 +1,7 @@
 import {generateRandomString, isValidUrl} from '@/app/api/utils'
 import fs from 'fs';
 import path from 'path';
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
 const connection = mysql.createConnection({
     host: process.env.HOST,
