@@ -9,8 +9,6 @@ const connection = mysql.createConnection({
 
 export  async function GET(request) {
 
-    await  new Promise((resolve, reject)=> setTimeout(()=> resolve(), 1000))
-
     try {
         const userID = '1234';
 

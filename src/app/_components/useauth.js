@@ -1,20 +1,18 @@
 // useAuth.js
 'use client'
-import { useState, useEffect } from 'react';
+import jwt from 'jsonwebtoken';
 
-const useAuth = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // Check authentication status here, e.g., by verifying a token stored in localStorage
+function getUserNameFromToken() {
     const token = localStorage.getItem('token');
-    if (token) {
-      // If authenticated, set the user state
-      setUser({ name: 'John Doe' }); // Example user
+  console.log(token)
+    try {
+        const decoded = jwt.verify(token, 'your_secret_key');
+        return decoded;
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return false;
     }
-  }, []);
+    return false;
+}
 
-  return user;
-};
-
-export default useAuth;
+export default getUserNameFromToken;

@@ -1,0 +1,45 @@
+import { databaseConnection, generateToken, executeQuery, hashPassword, comparePassword} from '@/app/api/utils'
+
+export  async function POST(request) {
+
+    try {
+
+        const data = await request.formData()
+
+        const email = data.get('email')
+        const password = data.get('password')
+
+        // Save the title and filenames in the MySQL database
+        const query = `SELECT * from users WHERE email ='${email}'`;
+        
+        const connection = await databaseConnection()
+
+        const results = await executeQuery(connection, query);
+        
+        // console.log("results", results, query)
+        
+        if(results.length){
+            const user = results[0]
+            if(comparePassword(password, user.password)){
+                return new Response(JSON.stringify({ success: true,  token: generateToken(user.username) }), {
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    status: 201
+                });
+            }else{
+                throw new Error('Incorrect email or password')
+            }
+        }else{
+            throw new Error('Incorrect email or password')
+        }
+    } catch (error) {
+        console.log(error)
+        return new Response(JSON.stringify({ success: false, msg: error.message  }), {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            status: 200
+        });
+    }
+}

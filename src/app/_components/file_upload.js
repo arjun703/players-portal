@@ -1,9 +1,9 @@
 export  async function pOSTRequest(formData, endPoint){
-    console.log(formData)
+    formData.append('token', localStorage.getItem('token'))
     try {
         const response = await fetch(endPoint, {
           method: 'POST',
-        
+            
           body: formData,
         });
 
@@ -22,7 +22,7 @@ export  async function pOSTRequest(formData, endPoint){
 }
 
 export  async function uPDATErequest(formData, endPoint){
-
+    formData.append('token', localStorage.getItem('token'))
     try {
         const response = await fetch(endPoint, {
           method: 'PUT',
@@ -44,7 +44,7 @@ export  async function uPDATErequest(formData, endPoint){
 }
 
 export  async function dELETErequest(formData, endPoint){
-
+    formData.append('token', localStorage.getItem('token'))
     try {
         const response = await fetch(endPoint, {
           method: 'DELETE',
@@ -61,5 +61,27 @@ export  async function dELETErequest(formData, endPoint){
 
     } catch (error) {
         return {success: false, msg: response.msg};
+    }
+}
+
+export  async function getRequest(endPoint){
+    try {
+        const response = await fetch(endPoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const responseJson = response.json()
+
+        if (response.ok) {
+            return responseJson
+        } else {
+            throw new Error('Error retrieving info')
+        }
+
+    } catch (error) {
+        throw new Error('Error retrieving info')
     }
 }

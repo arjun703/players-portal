@@ -2,22 +2,20 @@ import { Paper, Stack, Container, Grid, Skeleton } from "@mui/material"
 import Education from "./education";
 import { useState, useEffect } from "react";
 import AcademicFiles from "./academic_files";
-import { pOSTRequest, uPDATErequest, dELETErequest } from '@/app/_components/file_upload';
+import { pOSTRequest, getRequest, uPDATErequest, dELETErequest } from '@/app/_components/file_upload';
 
-export default function Academics() {
+export default function Academics({username}) {
 
     const [educations, setEducations] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
-
+    const [isEditable, setIsEditable] = useState(false)
+    
     useEffect(() => {
         async function fetchAcademics() {
             try {
-                const response = await fetch('/api/academics/'); // Adjust the API endpoint URL as needed
-                if (!response.ok) {
-                    throw new Error('Failed to fetch videos');
-                }
-                const data = await response.json();
+                const data = await getRequest('/api/academics/?username='+username); // Adjust the API endpoint URL as needed
                 setIsLoading(false)
+                setIsEditable(data.isEditable)
                 setEducations(data.educations)
                 setAcademicFiles(data.academicFiles)
             } catch (error) {
@@ -147,12 +145,14 @@ export default function Academics() {
                     ) : (
                         <Stack spacing={2}>
                             <Education
+                                isEditable={isEditable}
                                 educations={educations}
                                 handleAddEducation={handleAddEducation}
                                 handleEditEducation={handleEditEducation}
                                 handleDeleteEducation={handleDeleteEducation}
                             />
                             <AcademicFiles
+                                isEditable={isEditable}
                                 academicFiles={academicFiles}
                                 handleEditAcademicFile={handleEditAcademicFile}
                                 handleAddAcademicFile={handleAddAcademicFile}

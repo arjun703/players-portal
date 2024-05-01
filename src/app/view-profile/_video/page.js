@@ -187,7 +187,6 @@ export default function Videos() {
                 </Paper>
                 <FloatingActionButton btnIcon={<AddIcon />} btnTitle='Add New Video' handler={handleAddNewVideo} />
               </SortableContext>
-
           )
           : ( !addingNewVideo &&
             <DisplayNoVideos isLoadingVideos={isLoadingVideos}  openAddNewVideoForm={handleAddNewVideo}/>

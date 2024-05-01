@@ -26,7 +26,7 @@ function Img(){
   )
 }
 
-export default function HeaderLoggedIn({user}){
+export default function HeaderLoggedIn({username}){
   const router = useRouter()
   const isAtLeastMd = useMediaQuery('(min-width:900px)');
   const isAtLeastLg = useMediaQuery('(min-width:1200px)');

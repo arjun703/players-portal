@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
+import Button from '@mui/joy/Button';
 import Typography from '@mui/material/Typography';
 import { useRouter } from "next/navigation";
 
@@ -17,7 +17,7 @@ export default function Banner() {
     return (
         <div class="banner position-relative">
             <div class="banner-image">
-                <img src="/tennis-hero.jpg" class="banner-image" alt="Tennis Hero" />
+                <img src="/site-assets/banner.webp" class="banner-image" alt="Tennis Hero" />
             </div>
             <div class="position-absolute-lg">
                 <Box>
@@ -36,8 +36,7 @@ export default function Banner() {
                                     <div class="banner-button-wrapper">
                                         <Button 
                                             sx={{minWidth: '250px'}} 
-                                            variant="contained" 
-                                            size="large"
+                                            variant="solid" 
                                             onClick={handleClick}
                                         >
                                             {lang.sign_up_text}

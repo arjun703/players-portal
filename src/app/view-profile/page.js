@@ -33,38 +33,11 @@ export default function ViewProfile({ children }){
     const [startX, setStartX] = useState(null);
     const [endX, setEndX] = useState(null);
 
-
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };    
 
     const totalTabs = 6;
-
-    const handleTouchStart = (e) => {
-        setStartX(e.touches[0].clientX);
-      };
-    
-      const handleTouchMove = (e) => {
-        setEndX(e.touches[0].clientX);
-      };
-    
-      const handleTouchEnd = () => {
-        if (startX && endX) {
-          if (startX - endX > 50) {
-            // Swipe left
-            console.log("swiped left")
-            console.log("current value", value)
-            setValue((prevValue) => Math.min(parseInt(prevValue) + 1, 6).toString()); // Change 2 to the total number of tabs - 1
-        } else if (endX - startX > 50) {
-            // Swipe right
-            console.log("swiped right")
-            console.log("current value", value)
-            setValue((prevValue) => Math.max(parseInt(prevValue) - 1, 1).toString());
-          }
-        }
-        setStartX(null);
-        setEndX(null);
-      };
 
     return (
         <>
@@ -103,11 +76,7 @@ export default function ViewProfile({ children }){
                         </Container>
                     </Box>
 
-                    <div
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
-                    >
+                    <div>
                         <TabPanels />
                     </div>
 
